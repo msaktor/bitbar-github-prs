@@ -11,7 +11,8 @@ BitBar plugin displaying pending pull requests in Github
 
 4. Plugin will lookup your 50 most recent commits and extract repository names from that to be "watched". If you wish to hardcode some repositories on top of that, edit `fixedRepos` variable
 
-5. Edit node path in the shebang (1st row in the file)
+5. Edit node path in the shebang (1st row in the file)  
+Have node version **v10+**
 
 6. ???
 

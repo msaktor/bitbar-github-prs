@@ -43,6 +43,19 @@ function fetch(url, headers = {}) {
   })
 }
 
+async function commentReplies() {
+  const recentComments = await fetch('/repos/wandera/radar-service/pulls/comments?sort=updated&direction=desc&page=1&per_page=100')
+  const commentsObj = recentComments.reduce((acc, c) => { acc[c.id] = c; return acc }, {})
+  return recentComments.filter(c =>
+    c.user.login !== username
+    && c.in_reply_to_id
+    && commentsObj[c.in_reply_to_id]
+    && commentsObj[c.in_reply_to_id].user.login === username
+  )
+    .map(c => `${c.user.login}: ${c.body.replace(/\n/g, ' ').substr(0, 80)} | href=${c.html_url}`)
+    .slice(0, 5)
+}
+
 async function main() {
   try {
     const report = {}
@@ -54,7 +67,7 @@ async function main() {
     const results = await Promise.all(uniqueRepos.map(repo => fetch(`/repos/${repo}/pulls`)))
 
     for (const info of results) {
-      if(info.length > 0) {
+      if (info.length > 0) {
         const repoName = info[0].base.repo.name;
         for (const simplePr of info) {
           if (simplePr.requested_reviewers.map(reviewer => reviewer.login).includes(username) || simplePr.user.login == username) {
@@ -82,7 +95,9 @@ async function main() {
       strings.push(repoName + " | color=#0000ff")
       lines.forEach(line => strings.push(line))
     })
-    strings.map(string => console.log(string))
+    strings.push("---")
+    const comments = await commentReplies();
+    strings.concat(comments).map(string => console.log(string))
   } catch (e) {
     console.log(`Error :( | templateImage=${icon} dropdown=false`)
     console.log(e.toString())
