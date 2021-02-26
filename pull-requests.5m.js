@@ -50,9 +50,10 @@ async function commentReplies(uniqueRepos) {
   const commentsObj = recentComments.reduce((acc, c) => { acc[c.id] = c; return acc }, {})
   return recentComments
     .filter(c =>
-      c.user.login !== username
+      (c.user && c.user.login !== username)
       && c.in_reply_to_id
       && commentsObj[c.in_reply_to_id]
+      && commentsObj[c.in_reply_to_id].user
       && commentsObj[c.in_reply_to_id].user.login === username
     )
     .map(c => `${c.user.login}: ${c.body.replace(/\n/g, ' ').substr(0, 80)} | href=${c.html_url}`)
