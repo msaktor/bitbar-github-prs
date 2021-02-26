@@ -1,4 +1,4 @@
-#!/usr/bin/env /Users/msaktor/.nvm/versions/node/v10.13.0/bin/node
+#!/usr/bin/env /Users/msaktor/.nvm/versions/node/v14.12.0/bin/node
 
 // <bitbar.title>Github Pull requests</bitbar.title>
 // <bitbar.version>v1.0</bitbar.version>
@@ -34,7 +34,7 @@ function fetch(url, headers = {}) {
     const request = https.get(options, (response) => {
       // handle http errors
       if (response.statusCode !== 200) {
-        reject(new Error('Failed to load page, status code: ' + response.statusCode))
+        reject(new Error(`Failed to load page ${options.path}, status code: ` + response.statusCode))
       }
       const body = []
       response.on('data', (chunk) => body.push(chunk))
@@ -43,17 +43,25 @@ function fetch(url, headers = {}) {
   })
 }
 
-async function commentReplies() {
-  const recentComments = await fetch('/repos/wandera/radar-service/pulls/comments?sort=updated&direction=desc&page=1&per_page=100')
+async function commentReplies(uniqueRepos) {
+  const commentFetches = uniqueRepos.map((repo) => fetch(`/repos/${repo}/pulls/comments?sort=updated&direction=desc&page=1&per_page=100`))
+  const commentResponses = await Promise.all(commentFetches);
+  const recentComments = commentResponses.flat();
   const commentsObj = recentComments.reduce((acc, c) => { acc[c.id] = c; return acc }, {})
-  return recentComments.filter(c =>
-    c.user.login !== username
-    && c.in_reply_to_id
-    && commentsObj[c.in_reply_to_id]
-    && commentsObj[c.in_reply_to_id].user.login === username
-  )
+  return recentComments
+    .filter(c =>
+      c.user.login !== username
+      && c.in_reply_to_id
+      && commentsObj[c.in_reply_to_id]
+      && commentsObj[c.in_reply_to_id].user.login === username
+    )
     .map(c => `${c.user.login}: ${c.body.replace(/\n/g, ' ').substr(0, 80)} | href=${c.html_url}`)
-    .slice(0, 5)
+    .slice(0,5)
+}
+
+function getUpdatedAt(updated_at) {
+  const updatedDiff = ((new Date() - new Date(updated_at)) / (1000 * 60 * 60))
+  return updatedDiff >= 24 ? `${(updatedDiff / 24) | 0}d` : `${(updatedDiff | 0)}h`
 }
 
 async function main() {
@@ -71,11 +79,16 @@ async function main() {
         const repoName = info[0].base.repo.name;
         for (const simplePr of info) {
           if (simplePr.requested_reviewers.map(reviewer => reviewer.login).includes(username) || simplePr.user.login == username) {
-            const pr = await fetch(simplePr.url)
-            const updatedDiff = ((new Date() - new Date(pr.updated_at)) / (1000 * 60 * 60))
-            const updatedAt = updatedDiff >= 24 ? `${(updatedDiff / 24) | 0}d` : `${(updatedDiff | 0)}h`
-            const mergeable = pr.mergeable ? " color=#00ff00" : ""
-            const line = `${pr.title} (${pr.user.login}) ⏱${updatedAt} 💬${pr.review_comments} | href=${pr.html_url} ${mergeable}`
+            let line = '';
+            try {
+              const pr = await fetch(simplePr.url)
+              const updatedAt = getUpdatedAt(pr.updated_at)
+              const mergeable = pr.mergeable ? " color=#00ff00" : ""
+              line = `${pr.title} (${pr.user.login}) ⏱${updatedAt} 💬${pr.review_comments} | href=${pr.html_url} ${mergeable}`
+            } catch (e) {
+              const updatedAt = getUpdatedAt(simplePr.updated_at)
+              line = `${simplePr.title} (${simplePr.user.login}) ⏱${updatedAt} | href=${simplePr.html_url}`
+            }
             if (report[repoName]) {
               report[repoName].push(line)
             }
@@ -96,7 +109,7 @@ async function main() {
       lines.forEach(line => strings.push(line))
     })
     strings.push("---")
-    const comments = await commentReplies();
+    const comments = await commentReplies(uniqueRepos);
     strings.concat(comments).map(string => console.log(string))
   } catch (e) {
     console.log(`Error :( | templateImage=${icon} dropdown=false`)
