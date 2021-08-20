@@ -1,10 +1,10 @@
-#!/usr/bin/env /Users/msaktor/.nvm/versions/node/v14.12.0/bin/node
+#!/usr/bin/env node
 
-// <bitbar.title>Github Pull requests</bitbar.title>
-// <bitbar.version>v1.0</bitbar.version>
-// <bitbar.author>Marek Saktor</bitbar.author>
-// <bitbar.desc>Get list of pull requests from Github for multiple repositories (based on plugin from Noam Knispel)</bitbar.desc>
-// <bitbar.dependencies>node.js</bitbar.dependencies>
+// <xbar.title>Github Pull Requests</xbar.title>
+// <xbar.version>v1.0</xbar.version>
+// <xbar.author>Marek Saktor</xbar.author>
+// <xbar.desc>Get list of pull requests from Github for multiple repositories (based on plugin from Noam Knispel)</xbar.desc>
+// <xbar.dependencies>node.js</xbar.dependencies>
 
 // EDIT YOUR INFO BELOW:
 const username = 'msaktor'
@@ -14,10 +14,12 @@ const fixedRepos = [
 ]
 
 // IMPLEMENTATION STARTS HERE
-const icon = 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACoklEQVQ4T32TTUhUURTH/+e+GXXGeWaStMhC8/nMFlZobxAKRBCUgoLaRlCQGRGBRLZqGX1QUQuHkNoUCEUQheiiiBbpzOgiCh3Hp30sDImy5o6TX++eePNMzcS7uufe+//dc//3HMKqETRq92iaaFHKaRCkbXO3lcJnTcMrhxGZTsberZTQUlBSF9CD83eZRCMx3wHxCzlSZqP+G+kT0gD7DhLxOSZ0y9ngeXx6PeNqPUBWvNAL0Lieds5MTAxmVmfmxpurq/MzM4EIiLfK2WCTC8kCdLO2E4BfJgeOFxnhgh92NLUWYOP2mg1T44O/QhXWQyEgUyOxVnLf7BPiWSjt7HBv1o3wMJMzTSSeKka5CxKEMQKOsmKftOPVxTvrQzMLMqGgHSC90opAYUyOxq67h4OmZWvwhP8NRQlpR6u8rMOXCCih/IqaJLHvcNqODummtR/AmzXFi4ukqC5lR/vzTWuXUNRFumHNypy0jqGhOd3c2w7QlfUAANpkMnbTMzTv+z+AUIXVQoTIugCmE3I0+mAJkG9YI+RXR9LDAx8CZt0WjZwkMYJrQRyFNDlkTH+MTmYLTuARFVRaHcz0Rc4FboUCaQMLVATCVQJZ7gcsgpQD9GuCL8hE/K27FjKtywA2kWcGd/shquaFaodCn7Tjz3UzfAPgtiyA1TU5OnDxb1aFpbsLnRxfQgl/o1dIlVaEHCoMBH+fzGRy+xRTjiBVDiF8i6IemYw1L86FboYfk1JfU3b8rFfKpfV5em6mhxiT8GutvDBfDCU6QdiXTYDRmx6NNXk359wHVKFUP5th27PLzeRBboNxiEEdCnxMAwwXoByMaBq6GOo0KXqSwlSbK15uphWWu55ooFOs0ADBZd6WGmeIlyy0e9OJvvcrf+gPaEUjiE1E0cUAAAAASUVORK5CYII='
+const icon = 'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAdFQTFRFAAAAAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEfD1sGQAAAJt0Uk5TAExpKggGKGMvxP/1y1YNVMb0oAr3/dJIBFDwBUD5qCMpOVFcWzgnt/tx7f7z8UWQXaNwpXIL0bWTayASjl7NrfzYoX59jZ60yc6rloZ71N/yDAIBc/i8f8phA3Vsz+PbYPpGgsFBuKKLeUPHuxxaeKaKD5s86CYsGDNvJC0fGm2yw00TFlPX7j6wQiEiLnfixevlTzFSeoiBbhl5QEK5AAAB2ElEQVR4nK2S51sTQRDGhx7mDDWNQCAUE5ILoIAC0o4SqrTQOxEVUGNBEQVC79K7/rXO7l0eCDyXT8yHeWfm/e3d7d4CPEaEhUdEPpxGRcdolDIWhSfauGA7Lj4hEZPkOlmHiHqD0XRndYpBT0NzKu/SkIclPcOamZWdk/LUZrXnyjMbBxyohFMQmYiuvMAknwMFqBrPOPBcHSjkQJE6UMz8Fy/VgZIoAkrVfcQygFe6UEBeOVSE8hEroSo0UA1mrlJNbV29u6Gxqbk5tqX1dVt9a7vEjQ5gZ46d2V3KX/B4lKKrmH+cBRgoatmo+/Zn8bKHHXwvdFLuo2Wm/oFBBRkaHhihydAoWWMwTnmCpmUiejNlIEdC6Q3pJFlvwU75Hb81iG4ZeE/lFGk86TTMUP5AXTtpugx8pPITqZY0DHxexM/UNVL3RQa+UvmNtA1RmAUoQfxO3Y9EnPPJgMaMzp/AHfbSeQGFX6S/FxYDu1xasFL2C+hcZu2KF1fv3WkW5WuoW5dPxSFglXEj2N7c2sYdbeDsdg2i1LHn2F+y/fH7D2yHxiP7sV6foLnlZytP5uimW1zO09MdF+3LctZ3nhz0SJPv4tJxNXld4b6+mfm7fvjPA48V/wGe71VkZnddAwAAAABJRU5ErkJggg=='
 
 const console = require("console")
 const https = require("https")
+
+let errorRetries = 5;
 
 function fetch(url, headers = {}) {
   const options = {
@@ -31,15 +33,20 @@ function fetch(url, headers = {}) {
   }
 
   return new Promise((resolve, reject) => {
-    const request = https.get(options, (response) => {
-      // handle http errors
-      if (response.statusCode !== 200) {
-        reject(new Error(`Failed to load page ${options.path}, status code: ` + response.statusCode))
-      }
-      const body = []
-      response.on('data', (chunk) => body.push(chunk))
-      response.on('end', () => resolve(JSON.parse(body.join(''))))
-    })
+    try {
+      const request = https.get(options, (response) => {
+        // handle http errors
+        if (response.statusCode !== 200) {
+          reject(new Error(`Failed to load page ${options.path}, status code: ` + response.statusCode))
+        }
+        const body = []
+        response.on('data', (chunk) => body.push(chunk))
+        response.on('end', () => resolve(JSON.parse(body.join(''))))
+      })
+      request.on('error', error => reject(new Error(error)))
+    } catch (error) {
+      reject(new Error(error))
+    }
   })
 }
 
@@ -50,14 +57,14 @@ async function commentReplies(uniqueRepos) {
   const commentsObj = recentComments.reduce((acc, c) => { acc[c.id] = c; return acc }, {})
   return recentComments
     .filter(c =>
-      (c.user && c.user.login !== username)
+      c.user && c.user.login !== username
       && c.in_reply_to_id
       && commentsObj[c.in_reply_to_id]
       && commentsObj[c.in_reply_to_id].user
       && commentsObj[c.in_reply_to_id].user.login === username
     )
     .map(c => `${c.user.login}: ${c.body.replace(/\n/g, ' ').substr(0, 80)} | href=${c.html_url}`)
-    .slice(0,5)
+    .slice(0, 5)
 }
 
 function getUpdatedAt(updated_at) {
@@ -114,7 +121,15 @@ async function main() {
     strings.concat(comments).map(string => console.log(string))
   } catch (e) {
     console.log(`Error :( | templateImage=${icon} dropdown=false`)
+    console.log("---")
+    console.log('Refresh | refresh=true')
+    console.log("---")
     console.log(e.toString())
+
+    if (errorRetries > 0) {
+      setTimeout(() => main(), 200)
+      errorRetries--
+    }
   }
 }
 
