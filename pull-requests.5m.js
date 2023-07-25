@@ -90,6 +90,7 @@ async function main() {
             let line = '';
             try {
               const pr = await fetch(simplePr.url)
+              if (pr.base.repo.archived) { continue }
               const updatedAt = getUpdatedAt(pr.updated_at)
               const mergeable = pr.mergeable ? " color=#00ff00" : ""
               line = `${pr.title} (${pr.user.login}) ⏱${updatedAt} 💬${pr.review_comments} | href=${pr.html_url} ${mergeable}`
